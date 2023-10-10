@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="header">
+            <img width="70" class="logo-img" src="EYlogo.png" alt="">
+            <div>
+
+
+                <p class="main-heading">EY AI Assistant</p>
+                <p class="powered">Powered by EY</p>
+            </div>
+        </div>
+
+
+        <div class="main">
+            <div class="chat-container">
+                <div id="chat-messages">
+                </div>
+
+                <div id="loading" class="loading">
+                    Generating...
+                </div>
+
+                <div class="input-area">
+                    <input class="input-field" placeholder="Hello! Type your query:" type="text" id="user-input">
+                    <button class="submit button" type="submit" onclick="sendMessage()"><iconify-icon
+                            icon="ic:round-send"></iconify-icon></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // const context = "Make sure all the content is easy to read. Generate the output in a HTML div tag that can be embedded in HTML code. Whereever possible, generate points in <ol> and <ul> tags. Also add heading tags wherever possible. Don't add h1 and h2 tags. Add a request for further assitance. Don't add any further syling to the html."
+
+        const chatMessages = document.getElementById("chat-messages");
+        const userInput = document.getElementById("user-input");
+        const loading = document.getElementById("loading");
+
+        function showLoading() {
+            loading.style.display = "block";
+        }
+
+        function hideLoading() {
+            loading.style.display = "none";
+        }
+
+        function appendMessage(message, isUserMessage = false) {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = "message" + (isUserMessage ? " user-message" : "");
+            messageDiv.innerHTML = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const userMessage = userInput.value;
+            // const promptMessage = context + userInput.value;
+            const promptMessage = userInput.value;
+
+            console.log("" + userInput.value);
+            console.log(promptMessage);
+
+            appendMessage(userMessage, true);
+            userInput.value = "";
+
+            showLoading();
+
+            // Modify this part to work with the FastAPI API
+            // fetch("http://127.0.0.1:8000/query", {
+            fetch("https://rotary.procohat.xyz/query", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ query: promptMessage })
+            })
+                .then(response => response.json())  // This line is modified to parse JSON response
+                .then(data => {
+                    appendMessage(data);  // Assuming the response has a 'response' property containing the message
+                    hideLoading();
+                })
+                .catch(error => {
+                    console.error("Error sending message:", error);
+                    hideLoading();
+                });
+        }
+        userInput.focus();
+    </script>
+</body>
+
+</html>
