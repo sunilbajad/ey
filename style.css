@@ -142,7 +142,7 @@ height: 90vh;
 }
 
 .message::before{
-    content: url("/EY_logo.svg");;
+    content: url("./EY_logo.svg");;
     margin-right: 35px;
 }
 
@@ -157,6 +157,6 @@ height: 90vh;
 }
 
 .user-message::before{
-    content: url("/user.svg");;
+    content: url("./user.svg");;
     margin-right: 35px;
 }
